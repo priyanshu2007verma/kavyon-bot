@@ -54,8 +54,8 @@ export async function summarizeMessages(opts: SummarizeOptions): Promise<string>
 
       if (!response.ok) {
         const text = await response.text().catch(() => '');
-        logger.warn(`Groq model ${model} failed with ${response.status}`, { text });
-        lastError = new Error(`Groq ${response.status}`);
+        logger.warn(`Groq model ${model} failed`, { status: response.status, statusText: response.statusText, body: text });
+        lastError = new Error(`Groq ${response.status} ${response.statusText}`);
         continue;
       }
 
@@ -63,6 +63,7 @@ export async function summarizeMessages(opts: SummarizeOptions): Promise<string>
       const content = data?.choices?.[0]?.message?.content?.trim();
 
       if (!content) {
+        logger.warn(`Groq model ${model} returned empty content`, { data });
         lastError = new Error('Empty response from Groq');
         continue;
       }

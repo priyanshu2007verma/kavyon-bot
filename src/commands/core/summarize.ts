@@ -77,7 +77,12 @@ const command = {
 
       await interaction.editReply({ content: `**Summary**\n${summary}` });
     } catch (error) {
-      logger.error('Summarize command failed', error);
+      logger.error('Summarize command failed', {
+        guildId: interaction.guildId,
+        channelId: interaction.channelId,
+        userId: interaction.user.id,
+        error,
+      });
       await interaction.editReply({ content: 'Sorry, I could not summarize right now. Please try again later.' }).catch(() => undefined);
     }
   },
