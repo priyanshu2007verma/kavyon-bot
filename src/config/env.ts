@@ -15,4 +15,5 @@ export const env = {
   discordClientId: required('DISCORD_CLIENT_ID'),
   discordGuildId: process.env.DISCORD_GUILD_ID,
   databaseUrl: process.env.DATABASE_URL,
+  groqApiKey: process.env.GROQ_API_KEY,
 } as const;
