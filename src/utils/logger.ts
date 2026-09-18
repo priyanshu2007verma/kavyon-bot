@@ -8,6 +8,7 @@ function safeStringify(meta: unknown): string {
       stack: meta.stack,
     });
   }
+
   try {
     return JSON.stringify(meta);
   } catch {
@@ -18,11 +19,17 @@ function safeStringify(meta: unknown): string {
 function log(level: LogLevel, message: string, meta?: unknown): void {
   const timestamp = new Date().toISOString();
   const suffix = meta === undefined ? '' : ` ${safeStringify(meta)}`;
+
   console.log(`[${timestamp}] [${level}] ${message}${suffix}`);
 }
 
 export const logger = {
-  info: (message: string, meta?: unknown) => log('INFO', message, meta),
-  warn: (message: string, meta?: unknown) => log('WARN', message, meta),
-  error: (message: string, meta?: unknown) => log('ERROR', message, meta),
+  info: (message: string, meta?: unknown) =>
+    log('INFO', message, meta),
+
+  warn: (message: string, meta?: unknown) =>
+    log('WARN', message, meta),
+
+  error: (message: string, meta?: unknown) =>
+    log('ERROR', message, meta),
 };
