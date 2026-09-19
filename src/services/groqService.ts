@@ -20,14 +20,14 @@ export async function summarizeMessages(opts: SummarizeOptions): Promise<string>
     throw new Error('GROQ_API_KEY is not configured');
   }
 
-  const maxWords = opts.maxWords ?? 120;
+  const maxWords = opts.maxWords ?? 70;
   const context = opts.messages.join('\n').trim();
 
   if (!context) {
     throw new Error('No messages to summarize');
   }
 
-  const systemPrompt = `You are a concise summarizer. Summarize the following Discord messages in ~${maxWords} words. Output plain text only, no markdown headings or bullet lists. Focus on key topics, decisions and questions.`;
+  const systemPrompt = `You are a concise summarizer. Summarize the following Discord messages in ~${maxWords} words. Output plain text only, no markdown headings or bullet lists. Focus on the most important key topics, decisions and questions. Occasionally use line breaks if necessary to improve readability.`;
 
   const userPrompt = `Summarize these messages:\n\n${context}`;
 

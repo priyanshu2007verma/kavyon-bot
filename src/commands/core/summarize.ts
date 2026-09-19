@@ -183,7 +183,7 @@ const command = {
 
       const summary = await summarizeMessages({
         messages: lines,
-        maxWords: 120,
+        maxWords: 70,
       });
 
       // -------------------------------------------------------
