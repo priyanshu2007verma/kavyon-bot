@@ -5,6 +5,7 @@ import type {
 } from 'discord.js';
 
 import { ensureUser } from '../database/repositories/userRepository.js';
+import { handleEventButton } from '../modules/events/eventInteractions.js';
 import { logger } from '../utils/logger.js';
 
 export function registerInteractionEvent(
@@ -20,6 +21,33 @@ export function registerInteractionEvent(
 ): void {
   client.on('interactionCreate', async (interaction: Interaction) => {
     try {
+      /*
+       * Event buttons
+       */
+      if (interaction.isButton()) {
+        const handled = await handleEventButton(interaction);
+
+        if (handled) {
+          return;
+        }
+
+        /*
+         * Existing Help button
+         */
+        if (interaction.customId === 'kavyon:help:modules') {
+          await interaction.reply({
+            content:
+              'Module architecture is active. Database/configuration comes next, followed by moderation, announcements, resources, events, economy, tickets, founder tools, and optional AI.',
+            ephemeral: true,
+          });
+
+          return;
+        }
+      }
+
+      /*
+       * Slash commands
+       */
       if (interaction.isChatInputCommand()) {
         if (interaction.guild) {
           await ensureUser(
@@ -41,18 +69,6 @@ export function registerInteractionEvent(
         }
 
         await command.execute(interaction);
-        return;
-      }
-
-      if (
-        interaction.isButton() &&
-        interaction.customId === 'kavyon:help:modules'
-      ) {
-        await interaction.reply({
-          content:
-            'Module architecture is active. Database/configuration comes next, followed by moderation, announcements, resources, events, economy, tickets, founder tools, and optional AI.',
-          ephemeral: true,
-        });
       }
     } catch (error) {
       logger.error('Interaction failed', error);
