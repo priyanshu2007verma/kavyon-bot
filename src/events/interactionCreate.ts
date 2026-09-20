@@ -6,6 +6,7 @@ import type {
 
 import { ensureUser } from '../database/repositories/userRepository.js';
 import { handleEventButton } from '../modules/events/eventInteractions.js';
+import { handleTicketButton } from '../modules/tickets/ticketInteractions.js';
 import { logger } from '../utils/logger.js';
 
 export function registerInteractionEvent(
@@ -22,9 +23,21 @@ export function registerInteractionEvent(
   client.on('interactionCreate', async (interaction: Interaction) => {
     try {
       /*
-       * Event buttons
+       * Button interactions
        */
       if (interaction.isButton()) {
+        /*
+         * Ticket buttons must be handled before event buttons.
+         */
+        const ticketHandled = await handleTicketButton(interaction);
+
+        if (ticketHandled) {
+          return;
+        }
+
+        /*
+         * Event buttons
+         */
         const handled = await handleEventButton(interaction);
 
         if (handled) {
